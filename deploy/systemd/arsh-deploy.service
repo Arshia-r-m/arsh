@@ -1,7 +1,7 @@
 # systemd *user* unit: runs one deploy check, then exits.
 # Install to ~/.config/systemd/user/ (see deploy/README.md).
 [Unit]
-Description=Deploy arsh.unico.quest if GitHub main has moved
+Description=Deploy unico.quest if GitHub main has moved
 Documentation=https://github.com/Arshia-r-m/arsh/blob/main/deploy/README.md
 
 [Service]

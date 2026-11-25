@@ -1,4 +1,4 @@
-# Deploying arsh.unico.quest
+# Deploying unico.quest
 
 The site is deployed by **pulling**: a timer on the server checks GitHub's
 `main` every 2 minutes and, if `main` has moved, publishes the new commit.
@@ -51,7 +51,7 @@ Run as the normal user (no root needed):
   sandboxed: it can write only to `~/Services/arsh-site`.
 - **Caddy** (in Docker, `~/Services/caddy`) mounts `~/Services/arsh-site/site`
   **read-only** at `/srv/arsh` and serves `/srv/arsh/current` for
-  `arsh.unico.quest`, with automatic HTTPS and a strict CSP header
+  `unico.quest`, with automatic HTTPS and a strict CSP header
   (`deploy/caddy/arsh.Caddyfile`). It mounts the parent directory, not the
   symlink, because Docker resolves a mounted symlink once, at container start.
 - **CI** (`.github/workflows/validate.yml`) runs the same `check` on every PR.
@@ -88,14 +88,14 @@ systemctl --user daemon-reload
 systemctl --user enable --now arsh-deploy.timer
 ```
 
-DNS: `arsh.unico.quest` must point at the same address as `vault.unico.quest`.
+DNS: `unico.quest` must point at the server (same address as `vault.unico.quest`).
 
 ## Roll back the whole setup
 
 ```sh
 systemctl --user disable --now arsh-deploy.timer
 rm ~/.config/systemd/user/arsh-deploy.{service,timer}; systemctl --user daemon-reload
-# remove the arsh.unico.quest block and the /srv/arsh volume from ~/Services/caddy, then:
+# remove the unico.quest block and the /srv/arsh volume from ~/Services/caddy, then:
 cd ~/Services/caddy && docker compose up -d
 rm -r ~/Services/arsh-site
 ```

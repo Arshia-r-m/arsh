@@ -3,7 +3,7 @@
 # in ~/Services/caddy/compose.yml (the whole site/ dir, so the
 # "current" symlink is re-read on every request; mounting the symlink
 # itself would freeze the release at container start).
-arsh.unico.quest {
+unico.quest {
 	root * /srv/arsh/current
 	encode zstd gzip
 

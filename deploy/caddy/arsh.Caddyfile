@@ -1,0 +1,26 @@
+# Add to ~/Services/caddy/Caddyfile. Requires the read-only mount
+#   ../arsh-site/site:/srv/arsh:ro
+# in ~/Services/caddy/compose.yml (the whole site/ dir, so the
+# "current" symlink is re-read on every request; mounting the symlink
+# itself would freeze the release at container start).
+unico.quest {
+	root * /srv/arsh/current
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000;"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "same-origin"
+		Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; font-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		Cross-Origin-Opener-Policy "same-origin"
+		-Server
+	}
+
+	file_server
+
+	handle_errors 404 {
+		rewrite * /404.html
+		file_server
+	}
+}

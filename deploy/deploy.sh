@@ -114,7 +114,9 @@ fetch_main() {
   git_ rev-parse --verify --quiet "refs/remotes/origin/$BRANCH^{commit}" || die "branch $BRANCH not found"
 }
 
-live_sha() { [[ -L "$CURRENT" ]] && basename "$(readlink "$CURRENT")" || true; }
+live_sha() {
+  if [[ -L "$CURRENT" ]]; then basename "$(readlink "$CURRENT")"; fi
+}
 
 # activate SHA: atomically point current at releases/SHA.
 activate() {
@@ -201,7 +203,9 @@ do_status() {
   if [[ -d "$GIT_DIR_PATH" ]]; then
     echo "$BRANCH now: $(git_ ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
   fi
-  echo "releases:"; ls -1t "$RELEASES" 2>/dev/null | sed 's/^/  /'
+  echo "releases (newest first):"
+  find "$RELEASES" -mindepth 1 -maxdepth 1 -type d ! -name '.*' -printf '%T@ %f\n' 2>/dev/null |
+    sort -rn | cut -d' ' -f2 | sed 's/^/  /'
 }
 
 do_check() {

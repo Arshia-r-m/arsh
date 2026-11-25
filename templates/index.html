@@ -3,7 +3,9 @@
 {% block content %}
   <section class="hero" data-od-id="opening">
     <p class="kicker">Arsh</p>
-    <h1>I write code for freedom.</h1>
+    <!-- Typewriter: "I" is deleted and "My agents" typed in, with CSS only (see "hero typewriter" in style.css).
+         The animated words come from CSS and are hidden from screen readers; the real text is "My agents write code for freedom." -->
+    <h1><span class="type" aria-hidden="true"><span class="old"></span><span class="new"></span><span class="caret"></span></span><span class="sr">My agents </span><span class="rest">write code for freedom.</span></h1>
     <p class="lede">I build side projects for money, speech and compute that answer to their owner.</p>
   </section>
 

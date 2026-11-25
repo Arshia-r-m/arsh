@@ -42,17 +42,19 @@ a:hover{text-decoration-thickness:2px}
 .type .old::before{content:"I"}
 .type .new::before{content:"My agents"}
 .type .old{width:calc(1ch - .03em + .06em);animation:type-del 1ms 1.6s forwards}
-.type .new{width:0;animation:type-in 1.1s steps(9,end) 2.2s forwards}
+.type .new{width:0;margin-right:-.022em;visibility:hidden;animation:type-in 1.1s steps(9,end) 2.2s forwards,type-show 1ms steps(1,start) 2.32s forwards,type-pad 1ms steps(1,start) 2.32s forwards}
 .caret{display:inline-block;width:.07em;height:.8em;margin-left:.06em;background:var(--accent);vertical-align:-.04em;opacity:1;animation:caret 7.2s steps(1,end) forwards}
 @keyframes type-del{to{width:0}}
-@keyframes type-in{to{width:calc(9 * (1ch - .03em) + .06em)}}
+@keyframes type-in{to{width:calc(9 * (1ch - .03em))}}
+@keyframes type-show{to{visibility:visible}}
+@keyframes type-pad{to{padding-right:.022em}}
 /* cursor over 7.2s: blinks while waiting, solid while deleting and typing (1.5s-3.4s), blinks, then disappears */
 @keyframes caret{0%{opacity:1}6.25%{opacity:0}12.5%{opacity:1}18.75%{opacity:0}20.8%{opacity:1}47.2%{opacity:0}53.5%{opacity:1}59.7%{opacity:0}66%{opacity:1}72.2%{opacity:0}78.5%{opacity:1}84.7%{opacity:0}100%{opacity:0}}
 .hero h1 .rest{display:block;max-width:12.5ch}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){
   .type .old,.caret{display:none}
-  .type .new{width:auto;animation:none}
+  .type .new{visibility:visible;width:auto;animation:none}
 }
 .lede{margin-top:24px;font-size:clamp(18px,2.4vw,22px);line-height:1.45;color:var(--muted);max-width:var(--measure)}
 

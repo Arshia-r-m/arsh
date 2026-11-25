@@ -1,0 +1,22 @@
+# systemd *user* unit: runs one deploy check, then exits.
+# Install to ~/.config/systemd/user/ (see deploy/README.md).
+[Unit]
+Description=Deploy arsh.unico.quest if GitHub main has moved
+Documentation=https://github.com/Arshia-r-m/arsh/blob/main/deploy/README.md
+
+[Service]
+Type=oneshot
+# The INSTALLED copy, never the one inside a fetched checkout.
+ExecStart=%h/Services/arsh-site/bin/deploy.sh poll
+TimeoutStartSec=5min
+UMask=0022
+
+# Hardening: the deployer can only write its own directory.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/Services/arsh-site
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX

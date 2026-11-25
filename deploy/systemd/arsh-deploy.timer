@@ -1,0 +1,12 @@
+# Starts arsh-deploy.service every 2 minutes.
+[Unit]
+Description=Poll GitHub main for arsh.unico.quest every 2 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=2min
+RandomizedDelaySec=15s
+AccuracySec=15s
+
+[Install]
+WantedBy=timers.target

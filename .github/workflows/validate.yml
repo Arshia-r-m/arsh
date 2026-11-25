@@ -1,0 +1,31 @@
+name: validate
+
+# Runs on every PR (use this as the required status check in the main
+# ruleset) and on main itself. Uses pull_request, never pull_request_target,
+# so PRs from forks get a read-only token and no secrets.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Lint deploy script
+        run: shellcheck deploy/deploy.sh
+
+      - name: Validate site content (same checks the server runs)
+        run: bash deploy/deploy.sh check HEAD

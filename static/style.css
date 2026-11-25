@@ -29,6 +29,7 @@ a:hover{text-decoration-thickness:2px}
 .bar nav{display:flex;flex-wrap:wrap;gap:18px}
 .bar nav a{display:inline-block;padding:11px 0;text-decoration:none}
 .bar nav a:hover{text-decoration:underline}
+@media (max-width:480px){.bar nav{gap:0 14px}.bar nav a{padding:8px 0}}
 
 /* opening */
 .hero{padding:88px 0 72px}

@@ -5,18 +5,21 @@
 # server and holds no secrets for it. See deploy/README.md.
 #
 # Usage:
-#   deploy.sh deploy          Fetch main and deploy it now (even if unchanged).
-#   deploy.sh poll            Fetch main; deploy only if main has moved.
+#   deploy.sh deploy          Fetch the site branch and deploy it now (even if unchanged).
+#   deploy.sh poll            Fetch the site branch; deploy only if it has moved.
 #                             This is what the systemd timer runs.
 #   deploy.sh rollback [SHA]  Serve an older release (default: the previous one).
-#                             Sticks until main moves again.
-#   deploy.sh status          Show what is live and what main points to.
-#   deploy.sh check [REV]     Validate the site content of a git revision in the
-#                             current checkout (default HEAD). Used by CI.
+#                             Sticks until the branch moves again.
+#   deploy.sh status          Show what is live and what the branch points to.
+#   deploy.sh validate DIR    Run the content checks on a built site directory.
+#                             Used by CI on Zola's output (public/).
+#
+# The `site` branch holds only built HTML: CI runs Zola on every merge to main
+# and pushes the output there. The server never runs a build.
 #
 # Environment (all optional):
 #   ARSH_REPO_URL  default https://github.com/Arshia-r-m/arsh.git
-#   ARSH_BRANCH    default main
+#   ARSH_BRANCH    default site
 #   ARSH_ROOT      default $HOME/Services/arsh-site
 #   ARSH_KEEP      releases to keep, default 5
 #
@@ -29,7 +32,7 @@ umask 022
 export LC_ALL=C GIT_TERMINAL_PROMPT=0 GIT_CONFIG_NOSYSTEM=1
 
 REPO_URL=${ARSH_REPO_URL:-https://github.com/Arshia-r-m/arsh.git}
-BRANCH=${ARSH_BRANCH:-main}
+BRANCH=${ARSH_BRANCH:-site}
 ROOT=${ARSH_ROOT:-$HOME/Services/arsh-site}
 KEEP=${ARSH_KEEP:-5}
 
@@ -208,12 +211,9 @@ do_status() {
     sort -rn | cut -d' ' -f2 | sed 's/^/  /'
 }
 
-do_check() {
-  local rev=${1:-HEAD} tmp
-  tmp=$(mktemp -d)
-  TMP_PATHS+=("$tmp")
-  export_rev "$rev" "$tmp" git
-  validate_dir "$tmp"
+do_validate() {
+  [[ -n "${1:-}" && -d "$1" ]] || die "usage: deploy.sh validate DIR"
+  validate_dir "${1%/}"
 }
 
 case ${1:-} in
@@ -221,6 +221,6 @@ case ${1:-} in
   poll)     with_lock nowait do_deploy no ;;
   rollback) with_lock wait do_rollback "${2:-}" ;;
   status)   do_status ;;
-  check)    do_check "${2:-}" ;;
-  *)        sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+  validate) do_validate "${2:-}" ;;
+  *)        sed -n '2,29p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac

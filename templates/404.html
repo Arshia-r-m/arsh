@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block robots %}<meta name="robots" content="noindex">{% endblock robots %}
+{% block title %}Key not found — Arsh{% endblock title %}
+{% block nav %}{% endblock nav %}
+
+{% block content %}
+  <section class="missing">
+    <p class="code" aria-hidden="true">404</p>
+    <h1>Key not found.</h1>
+    <p class="prose">The page you asked for is not here. Neither is its private key.</p>
+    <a class="back" href="/">Go back to the front page.</a>
+  </section>
+{% endblock content %}
+
+{% block colophon %}
+    <p>Colophon: plain HTML and one stylesheet. No scripts, no trackers, no cookies.</p>
+{% endblock colophon %}

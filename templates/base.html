@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'">
+{% block robots %}{% endblock robots %}
+<title>{% block title %}{{ config.title }}{% endblock title %}</title>
+<meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<link rel="alternate" type="application/atom+xml" title="Arsh: posts" href="/atom.xml">
+</head>
+<body>
+<!-- You are reading the source. Good instinct. There are no scripts on this site, and every page refuses to run any: see Content-Security-Policy in the head. -->
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="wrap">
+    <p class="promise">no trackers · no cookies · no JavaScript</p>
+    {% block nav %}
+    <nav aria-label="Site">
+      <a href="/#manifesto">manifesto</a>
+      <a href="/#build">what I build</a>
+      <a href="/posts/">posts</a>
+      <a href="/#keys">keys</a>
+      <a href="/#contact">contact</a>
+    </nav>
+    {% endblock nav %}
+  </div>
+</header>
+
+<main id="main" class="wrap" tabindex="-1">
+{% block content %}{% endblock content %}
+
+  <footer class="colophon">
+    {% block colophon %}
+    <noscript><p class="allthere">You are seeing everything. There is nothing to enable.</p></noscript>
+    <p>Colophon: plain HTML and one stylesheet, built from Markdown. No scripts, no trackers, no cookies, nothing loaded from anyone else.</p>
+    <p>To check, view the source. All of it is at <a href="https://github.com/Arshia-r-m/arsh">github.com/Arshia-r-m/arsh</a>.</p>
+    {% endblock colophon %}
+  </footer>
+</main>
+</body>
+</html>

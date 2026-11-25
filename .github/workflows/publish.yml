@@ -1,0 +1,58 @@
+name: publish
+
+# On every push to main (i.e. a merged PR): build with Zola, validate, and
+# commit the output to the `site` branch. The server pulls `site`.
+# This is the only job with write access, and it only runs on main.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write   # push to the site branch
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Zola (pinned, checksum verified)
+        run: deploy/install-zola.sh
+
+      - name: Build
+        run: zola build
+
+      - name: Validate built site (same checks the server runs)
+        run: deploy/deploy.sh validate public
+
+      - name: Commit output to the site branch
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch --depth=1 origin site; then
+            git worktree add --detach "$RUNNER_TEMP/out" FETCH_HEAD
+          else
+            git worktree add --orphan -b site "$RUNNER_TEMP/out"
+          fi
+          cd "$RUNNER_TEMP/out"
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a "$GITHUB_WORKSPACE/public/." .
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Built site unchanged; nothing to publish."
+            exit 0
+          fi
+          git commit -q -m "Build of ${SOURCE_SHA}"
+          git push origin HEAD:refs/heads/site
+          echo "Published $(git rev-parse HEAD) (from ${SOURCE_SHA}) to site"

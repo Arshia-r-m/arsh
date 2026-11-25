@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="hero" data-od-id="opening">
+    <p class="kicker">Arsh</p>
+    <h1>I write code for freedom.</h1>
+    <p class="lede">I build side projects for money, speech and compute that answer to their owner.</p>
+  </section>
+
+  <section class="sec" id="manifesto" data-od-id="manifesto">
+    <h2>Manifesto</h2>
+    <div>
+      <!-- The four lines below are a draft. Rewrite them in your own words before publishing. -->
+      <ol class="creed">
+        <li data-n="01">Money should answer to the person holding it.</li>
+        <li data-n="02">Speech should not need anyone's permission.</li>
+        <li data-n="03">A computer you do not control is someone else's.</li>
+        <li data-n="04">Tools for freedom only work when anyone can read how they are built.</li>
+      </ol>
+      <blockquote>
+        “Cypherpunks write code.”
+        <cite><a href="https://www.activism.net/cypherpunk/manifesto.html">A Cypherpunk's Manifesto</a>, Eric Hughes, 1993</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="sec" id="build" data-od-id="what-i-build">
+    <h2>What I build</h2>
+    <div>
+      <dl class="areas">
+        <div><dt>Money</dt><dd>Payments that move without asking anyone.</dd></div>
+        <div><dt>Speech</dt><dd>Messages that find a way without the internet.</dd></div>
+        <div><dt>Compute</dt><dd>Machines that obey the person at the keyboard.</dd></div>
+      </dl>
+      <p class="soon">The projects themselves will be listed here once there is something to point at.</p>
+    </div>
+  </section>
+
+  {% set posts = get_section(path="posts/_index.md") %}
+  {% if posts.pages | length > 0 %}
+  <section class="sec" id="writing">
+    <h2>Writing</h2>
+    <div>
+      <ul class="postlist">
+        {% for p in posts.pages[:5] %}
+        <li><time datetime="{{ p.date }}">{{ p.date }}</time><a href="{{ p.path | safe }}">{{ p.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <p class="more"><a href="/posts/">All posts</a> · <a href="/atom.xml">Atom feed</a></p>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="sec" id="keys" data-od-id="keys">
+    <h2>Keys</h2>
+    <div>
+      <p class="prose">No keys are published yet. If someone writes to you as Arsh and points at a key, it is not mine.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="contact" data-od-id="contact">
+    <h2>Contact</h2>
+    <div>
+      <p class="prose">GitHub is the only door for now: <a href="https://github.com/Arshia-r-m">github.com/Arshia-r-m</a></p>
+    </div>
+  </section>
+
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Posts — Arsh{% endblock title %}
+{% block description %}{{ section.description or config.description }}{% endblock description %}
+
+{% block content %}
+  <section class="page-head">
+    <p class="kicker">Writing</p>
+    <h1>Posts</h1>
+  </section>
+
+  <section class="sec">
+    <h2>Newest first</h2>
+    <div>
+      {% if section.pages | length > 0 %}
+      <ul class="postlist">
+        {% for p in section.pages %}
+        <li><time datetime="{{ p.date }}">{{ p.date }}</time><a href="{{ p.path | safe }}">{{ p.title }}</a></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="prose">Nothing here yet.</p>
+      {% endif %}
+      <p class="more"><a href="/tags/">Tags</a> · <a href="/atom.xml">Atom feed</a></p>
+    </div>
+  </section>
+{% endblock content %}

@@ -1,15 +1,20 @@
 # Deploying unico.quest
 
-The site is deployed by **pulling**: a timer on the server checks GitHub's
-`main` every 2 minutes and, if `main` has moved, publishes the new commit.
-GitHub never connects to the server and holds no secrets for it. The repo is
-public, so fetching needs no credentials either.
+The site is built by CI and deployed by **pulling**. On every merge to `main`,
+GitHub Actions runs Zola and commits the HTML output to the `site` branch. A
+timer on the server checks `site` every 2 minutes and, if it has moved,
+publishes it. GitHub never connects to the server and holds no secrets for it.
+The repo is public, so fetching needs no credentials either. The server never
+runs a build.
 
 ```
-PR ──► CI "validate" ──► merge to main (ruleset) ──► timer on server
-                                                         │ git fetch (HTTPS, read-only)
-                                                         ▼
-                                     validate again ─► releases/<sha>/ ─► current ─► Caddy
+PR ──► CI "validate" (zola build + checks) ──► merge to main (ruleset)
+                                                     │
+                       CI "publish": zola build + checks ─► push HTML to `site`
+                                                     │
+                     timer on server: git fetch `site` (HTTPS, read-only)
+                                                     ▼
+                         validate again ─► releases/<sha>/ ─► current ─► Caddy
 ```
 
 ## Commands
@@ -18,21 +23,20 @@ Run as the normal user (no root needed):
 
 | Command | What it does |
 |---|---|
-| `~/Services/arsh-site/bin/deploy.sh deploy` | Fetch `main` and deploy it **now** |
-| `~/Services/arsh-site/bin/deploy.sh poll` | Deploy only if `main` moved (what the timer runs) |
-| `~/Services/arsh-site/bin/deploy.sh status` | What is live vs. what `main` is |
-| `~/Services/arsh-site/bin/deploy.sh rollback [SHA]` | Serve the previous (or given) release until `main` moves again |
+| `~/Services/arsh-site/bin/deploy.sh deploy` | Fetch `site` and deploy it **now** |
+| `~/Services/arsh-site/bin/deploy.sh poll` | Deploy only if `site` moved (what the timer runs) |
+| `~/Services/arsh-site/bin/deploy.sh status` | What is live vs. what `site` is |
+| `~/Services/arsh-site/bin/deploy.sh rollback [SHA]` | Serve the previous (or given) release until `site` moves again |
 | `systemctl --user start arsh-deploy.service` | Trigger a poll right now through systemd |
 | `journalctl --user -u arsh-deploy.service` | Deploy logs |
 
 ## How it works
 
 - **`deploy/deploy.sh`** keeps a bare copy of the repo in
-  `~/Services/arsh-site/repo.git` and fetches `main` over HTTPS. It compares the
-  commit with `state/last-main`. If they match, `poll` exits quietly. If they
-  differ (or you ran `deploy`), it:
-  1. exports the commit with `git archive`, leaving out `deploy/`, `.github/`,
-     `README.md` and other repo-only files, and never `.git`;
+  `~/Services/arsh-site/repo.git` and fetches `site` over HTTPS. It compares the
+  commit with `state/last-main` (the last deployed commit). If they match,
+  `poll` exits quietly. If they differ (or you ran `deploy`), it:
+  1. exports the commit with `git archive`, never including `.git`;
   2. **validates** it: `index.html` must exist; only static file types are
      allowed; no symlinks, hidden files, oversized files, `<script>`, `on…=`
      handlers or `javascript:` URLs;
@@ -54,8 +58,11 @@ Run as the normal user (no root needed):
   `unico.quest`, with automatic HTTPS and a strict CSP header
   (`deploy/caddy/arsh.Caddyfile`). It mounts the parent directory, not the
   symlink, because Docker resolves a mounted symlink once, at container start.
-- **CI** (`.github/workflows/validate.yml`) runs the same `check` on every PR.
-  Make it a required status check in the `main` ruleset.
+- **CI**: `.github/workflows/validate.yml` builds every PR with a pinned,
+  checksum-verified Zola (`deploy/install-zola.sh`) and runs the same checks
+  (`deploy.sh validate public`). Make it a required status check in the `main`
+  ruleset. `.github/workflows/publish.yml` does the same on `main` and commits
+  the output to `site`. It is the only job with write access.
 
 ### Security notes
 
@@ -66,7 +73,9 @@ Run as the normal user (no root needed):
 - The server re-validates every commit itself, so a weakened check in a PR
   cannot get scripts published.
 - Only `https://` fetches are allowed. Commit signatures are not checked: trust
-  comes from the `main` ruleset.
+  comes from the `main` ruleset, and from protecting `site` (block deletion and
+  force pushes; ideally restrict updates to GitHub Actions).
+- Zola runs only in CI, from a pinned release whose SHA-256 is checked.
 
 ## Install / update on the server
 

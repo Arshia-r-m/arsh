@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}#{{ term.name }} — Arsh{% endblock title %}
+
+{% block content %}
+  <section class="page-head">
+    <p class="kicker"><a href="/tags/">Tags</a></p>
+    <h1>#{{ term.name }}</h1>
+  </section>
+
+  <section class="sec">
+    <h2>{{ term.pages | length }} post{% if term.pages | length != 1 %}s{% endif %}</h2>
+    <div>
+      <ul class="postlist">
+        {% for p in term.pages %}
+        <li><time datetime="{{ p.date }}">{{ p.date }}</time><a href="{{ p.path | safe }}">{{ p.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <p class="more"><a href="/posts/">All posts</a></p>
+    </div>
+  </section>
+{% endblock content %}

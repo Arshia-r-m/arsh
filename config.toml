@@ -1,0 +1,26 @@
+# Zola site config. Docs: https://www.getzola.org/documentation/getting-started/configuration/
+base_url = "https://unico.quest"
+title = "Arsh — I write code for freedom."
+description = "Arsh writes code for freedom: side projects for money, speech and compute that answer to their owner."
+default_language = "en"
+
+# Atom feed of all dated posts at /atom.xml
+generate_feeds = true
+feed_filenames = ["atom.xml"]
+
+# /tags/ and /tags/<name>/ pages; no per-tag feeds
+taxonomies = [
+  { name = "tags", feed = false },
+]
+
+compile_sass = false
+build_search_index = false   # search needs JavaScript; this site has none
+minify_html = false          # keep the source readable: "view the source" is part of the point
+generate_sitemap = true
+generate_robots_txt = true
+
+[markdown]
+smart_punctuation = true     # "quotes" -> “quotes”, -- -> –
+bottom_footnotes = true
+render_emoji = false
+external_links_no_referrer = true

@@ -1,12 +1,10 @@
 name: validate
 
-# Runs on every PR (use this as the required status check in the main
-# ruleset) and on main itself. Uses pull_request, never pull_request_target,
-# so PRs from forks get a read-only token and no secrets.
+# Runs on every PR. Make "validate" a required status check in the main
+# ruleset. Uses pull_request, never pull_request_target, so PRs from forks get
+# a read-only token and no secrets.
 on:
   pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -24,8 +22,21 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Lint deploy script
-        run: shellcheck deploy/deploy.sh
+      - name: Lint shell scripts
+        run: shellcheck deploy/deploy.sh deploy/install-zola.sh
 
-      - name: Validate site content (same checks the server runs)
-        run: bash deploy/deploy.sh check HEAD
+      - name: Install Zola (pinned, checksum verified)
+        run: deploy/install-zola.sh
+
+      - name: Build
+        run: zola build
+
+      - name: Validate built site (same checks the server runs)
+        run: deploy/deploy.sh validate public
+
+      # Download from the run page to preview the PR's site locally.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-preview
+          path: public/
+          retention-days: 7

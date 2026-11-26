@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
-    <title>Arsh — I write code for freedom.</title>
-    <subtitle>Arsh writes code for freedom: side projects for money, speech and compute that answer to their owner.</subtitle>
+    <title>Arsh — code for freedom &amp; sovereignty.</title>
+    <subtitle>Arsh builds tech for freedom and sovereignty: tools you can run, read and own without asking anyone.</subtitle>
     <link rel="self" type="application/atom+xml" href="https://unico.quest/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://unico.quest"/>
     <generator uri="https://www.getzola.org/">Zola</generator>

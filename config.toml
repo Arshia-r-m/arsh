@@ -1,7 +1,7 @@
 # Zola site config. Docs: https://www.getzola.org/documentation/getting-started/configuration/
 base_url = "https://unico.quest"
-title = "Arsh — I write code for freedom."
-description = "Arsh writes code for freedom: side projects for money, speech and compute that answer to their owner."
+title = "Arsh — code for freedom & sovereignty."
+description = "Arsh builds tech for freedom and sovereignty: tools you can run, read and own without asking anyone."
 default_language = "en"
 
 # Atom feed of all dated posts at /atom.xml
